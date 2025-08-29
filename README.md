@@ -26,6 +26,13 @@ This is a Streamlit-based application for detecting motorbikes in images, webcam
 2. Select an input type (Image, Webcam, Video) and upload/process accordingly.
 3. Outputs are saved to `output/`; logs are in `logs/`.
 
+## Tech Stack
+- **Framework**: Streamlit (for the web interface).
+- **Machine Learning**: Ultralytics YOLOv8 (for motorbike detection).
+- **Computer Vision**: OpenCV (for image/video processing and annotation).
+- **Data Handling**: NumPy (for numerical operations).
+- **Logging**: Python's built-in `logging` module (for session logs).
+
 ## Model
 - Trained model: `best_motorbike.pt` (download from [Placeholder Link - Upload to Google Drive later]).
 - Training notebook: [motorbike_detection_training.ipynb](motorbike_detection_training.ipynb) (contains training details).
@@ -84,8 +91,6 @@ This is a Streamlit-based application for detecting motorbikes in images, webcam
 ## Notes
 - Inference speed and detection accuracy may vary due to hardware limitations and the current training dataset.
 - Contributions and feedback are welcome to improve the model and app.
-
-```
-- **Deployment**: Want to move to Streamlit Cloud next?
+- **Deployment**: Want to move to Streamlit Cloud now?
 
 Let me know your progress or any assistance needed!
