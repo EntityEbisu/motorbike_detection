@@ -34,7 +34,7 @@ This is a Streamlit-based application for detecting motorbikes in images, webcam
 - **Logging**: Python's built-in `logging` module (for session logs).
 
 ## Model
-- Trained model: `best_motorbike.pt` (download from [Placeholder Link - Upload to Google Drive later]).
+- Trained model: `best_motorbike.pt` (download from [https://drive.google.com/file/d/1SG-WkjWjMllMSnr4iX6UDjck4zVZHpOs/view?usp=sharing]).
 - Training notebook: [motorbike_detection_training.ipynb](motorbike_detection_training.ipynb) (contains training details).
 
 ## Training Data
@@ -42,7 +42,7 @@ This is a Streamlit-based application for detecting motorbikes in images, webcam
 - Description: Contains images of motorbikes, primarily front-facing and rear-facing, which impacts detection performance (see Weaknesses).
 
 ## Sample Output
-- Annotated video example: [Placeholder Link - Upload demo video to Google Drive later].
+- Annotated video example: [https://drive.google.com/drive/folders/13ou4Q37mBWYUZIQ8-4mXkDzWe_aYLEO0?usp=sharing].
 
 ## Logs
 - Generated locally at `logs/detection_log_YYYYMMDD_HHMMSS.txt`.
