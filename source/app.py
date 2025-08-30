@@ -6,29 +6,41 @@ import numpy as np
 import logging
 import datetime
 import requests
+from urllib.parse import urlparse
 
 # Toggle between local and Google Drive model (set to True for local, False for Drive)
-use_local_model = False  # Set to False for cloud deployment
+use_local_model = False
 
-# Download model from Google Drive
+# Download model from Google Drive with confirmation token handling
 def download_model(url, save_path):
-    # Ensure the directory exists
     os.makedirs(os.path.dirname(save_path) or '.', exist_ok=True)
     if not os.path.exists(save_path):
         print(f"Downloading model from {url}...")
-        response = requests.get(url)
+        session = requests.Session()
+        response = session.get(url, stream=True)
+        if 'content-disposition' in response.headers:
+            filename = response.headers['content-disposition'].split('filename=')[1].strip('"')
+            save_path = os.path.join(os.path.dirname(save_path), filename)
+        else:
+            # Handle direct download or token request
+            for cookie in response.cookies:
+                if cookie.name == 'download_warning':
+                    params = {'id': urlparse(url).query.split('=')[1], 'confirm': cookie.value}
+                    response = session.get(f"https://drive.google.com/uc?export=download", params=params, stream=True)
+                    break
         with open(save_path, 'wb') as f:
-            f.write(response.content)
+            for chunk in response.iter_content(chunk_size=32768):
+                if chunk:  # filter out keep-alive new chunks
+                    f.write(chunk)
         print(f"Model saved to {save_path}")
     else:
         print(f"Model already exists at {save_path}")
 
 # Generate a unique log file name for each run
 run_timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-log_file = f"logs/detection_log_{run_timestamp}.txt"  # Relative path for cloud
+log_file = f"logs/detection_log_{run_timestamp}.txt"
 os.makedirs(os.path.dirname(log_file), exist_ok=True)
-logging.basicConfig(filename=log_file, level=logging.INFO, 
-                    format='%(asctime)s - %(message)s')
+logging.basicConfig(filename=log_file, level=logging.INFO, format='%(asctime)s - %(message)s')
 
 st.title("Motorbike Detection")
 
@@ -36,15 +48,13 @@ st.title("Motorbike Detection")
 model_path = "models/best_motorbike.pt"
 
 if use_local_model:
-    # Use local model if it exists
     if os.path.exists(model_path):
         print(f"Loading local model from {model_path}")
         model = YOLO(model_path)
     else:
         st.error(f"Local model not found at {model_path}. Please place best_motorbike.pt in the models/ folder or switch to Google Drive mode.")
 else:
-    # Download from Google Drive if not using local model
-    model_url = "https://drive.google.com/uc?export=download&id=1SG-WkjWjMllMSnr4iX6UDjck4zVZHpOs"  # Your provided FILE_ID
+    model_url = "https://drive.google.com/uc?export=download&id=1SG-WkjWjMllMSnr4iX6UDjck4zVZHpOs"
     download_model(model_url, model_path)
     model = YOLO(model_path)
 
