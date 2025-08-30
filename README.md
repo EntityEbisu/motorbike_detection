@@ -17,8 +17,8 @@ This project is a real-time motorbike detection application built with Python. I
 - **API Integration**: Leveraged the ultralytics library to integrate the YOLO model into a front-end application.
 - **Full-Stack Development (Frontend)**: Developed a functional and responsive web interface for user interaction using Streamlit.
 
-## Project Overview
-This project is a real-time motorbike detection application built with Python. It leverages a custom-trained YOLOv8 model to accurately identify motorbikes in images and videos, providing a practical demonstration of my skills in computer vision, machine learning model deployment, and web application development. The application is designed as the foundation for a more advanced system, with future plans to detect helmet violations and capture license plates for enhanced road safety monitoring. See it in action: [Demo Video on Google Drive](https://drive.google.com/drive/folders/13ou4Q37mBWYUZIQ8-4mXkDzWe_aYLEO0?usp=sharing).
+## Demo
+Watch a demonstration of the motorbike detection application in action: [Demo Video on Google Drive](https://drive.google.com/drive/folders/13ou4Q37mBWYUZIQ8-4mXkDzWe_aYLEO0?usp=sharing).
 
 ## Installation
 1. **Clone the Repository**:
