@@ -2,7 +2,7 @@
 
 ## Project Overview
 This project is a real-time motorbike detection application built with Python. It leverages a custom-trained YOLOv8 model to accurately identify motorbikes in images and videos, providing a practical demonstration of my skills in computer vision, machine learning model deployment, and web application development. The application is designed as the foundation for a more advanced system, with future plans to detect helmet violations and capture license plates for enhanced road safety monitoring.
-- Uploaded the Application onto Streamlit Community Cloud: [Link to App:](https://prototype-motorbike-detection-ebisu.streamlit.app/).
+- Deployed the Application onto Streamlit Community Cloud: [Link to App:](https://prototype-motorbike-detection-ebisu.streamlit.app/).
 
 ## Key Features
 - **Real-time Detection**: Utilizes a lightweight YOLOv8 model for efficient motorbike detection in various media formats.
