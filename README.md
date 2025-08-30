@@ -12,7 +12,7 @@ This project is a real-time motorbike detection application built with Python. I
 
 ## Technical Skills Demonstrated
 - **Computer Vision**: Applied core concepts of object detection and used OpenCV for image/video manipulation and annotation.
-- **Machine Learning**: Implemented and fine-tuned a state-of-the-art YOLOv8 model for a specific use case.
+- **Machine Learning**: Trained, Implemented and fine-tuned a state-of-the-art YOLOv8 model on a custom dataset for a specific use case.
 - **Cloud Deployment**: Successfully configured a Python application for deployment on a cloud platform (Streamlit), including dependency management and handling file paths and resource limitations.
 - **API Integration**: Leveraged the ultralytics library to integrate the YOLO model into a front-end application.
 - **Full-Stack Development (Frontend)**: Developed a functional and responsive web interface for user interaction using Streamlit.
