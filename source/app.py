@@ -5,6 +5,37 @@ import os
 import numpy as np
 import logging
 import datetime
+import requests
+from urllib.parse import urlparse
+
+# Toggle between local and Google Drive model (set to True for local, False for Drive)
+# For local development, set this to True.
+# For Streamlit cloud deployment, set to False so the model is downloaded at runtime.
+use_local_model = True
+
+# Download model from Google Drive with confirmation token handling
+def download_model(url, save_path):
+    os.makedirs(os.path.dirname(save_path) or '.', exist_ok=True)
+    if not os.path.exists(save_path):
+        print(f"Downloading model from {url}...")
+        session = requests.Session()
+        response = session.get(url, stream=True)
+        if 'content-disposition' in response.headers:
+            filename = response.headers['content-disposition'].split('filename=')[1].strip('"')
+            save_path = os.path.join(os.path.dirname(save_path), filename)
+        else:
+            for cookie in response.cookies:
+                if cookie.name == 'download_warning':
+                    params = {'id': urlparse(url).query.split('=')[1], 'confirm': cookie.value}
+                    response = session.get(f"https://drive.google.com/uc?export=download", params=params, stream=True)
+                    break
+        with open(save_path, 'wb') as f:
+            for chunk in response.iter_content(chunk_size=32768):
+                if chunk:
+                    f.write(chunk)
+        print(f"Model saved to {save_path}")
+    else:
+        print(f"Model already exists at {save_path}")
 
 # Generate a unique log file name for each run
 run_timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -14,16 +45,20 @@ logging.basicConfig(filename=log_file, level=logging.INFO, format='%(asctime)s -
 
 st.title("Motorbike Detection")
 
-# Model path (relative to the app.py location)
+# Model path
 model_path = "models/best_motorbike.pt"
 
-# Load the local model
-if os.path.exists(model_path):
-    print(f"Loading local model from {model_path}")
-    model = YOLO(model_path)
+if use_local_model:
+    if os.path.exists(model_path):
+        print(f"Loading local model from {model_path}")
+        model = YOLO(model_path)
+    else:
+        st.error(f"Local model not found at {model_path}. Please ensure best_motorbike.pt is in the models/ folder.")
+        st.stop()
 else:
-    st.error(f"Local model not found at {model_path}. Please ensure best_motorbike.pt is in the models/ folder.")
-    st.stop()
+    model_url = "https://drive.google.com/uc?export=download&id=1SG-WkjWjMllMSnr4iX6UDjck4zVZHpOs"
+    download_model(model_url, model_path)
+    model = YOLO(model_path)
 
 # Function to log detection results
 def log_detection(image_source, num_detections):
