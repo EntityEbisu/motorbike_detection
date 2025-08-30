@@ -46,7 +46,7 @@ logging.basicConfig(filename=log_file, level=logging.INFO, format='%(asctime)s -
 st.title("Motorbike Detection")
 
 # Corrected model path for Streamlit deployment
-model_path = "../models/best_motorbike.pt"
+model_path = "models/best_motorbike.pt"
 
 if use_local_model:
     if os.path.exists(model_path):
