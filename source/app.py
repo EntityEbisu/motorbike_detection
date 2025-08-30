@@ -9,6 +9,7 @@ import requests
 
 # Toggle between local and Google Drive model (set to True for local, False for Drive)
 use_local_model = False  # Change to False for Google Drive download
+gdrive_model_link = "https://drive.google.com/uc?export=download&id=1SG-WkjWjMllMSnr4iX6UDjck4zVZHpOs" # Change to your preferred model link if needed
 
 # Download model from Google Drive
 def download_model(url, save_path):
@@ -42,7 +43,7 @@ if use_local_model:
         st.error(f"Local model not found at {model_path}. Please place best_motorbike.pt in the models/ folder or switch to Google Drive mode.")
 else:
     # Download from Google Drive if not using local model
-    model_url = "https://drive.google.com/uc?export=download&id=1SG-WkjWjMllMSnr4iX6UDjck4zVZHpOs"  # Extracted FILE_ID
+    model_url = gdrive_model_link # Extracted FILE_ID
     download_model(model_url, model_path)
     model = YOLO(model_path)
 
