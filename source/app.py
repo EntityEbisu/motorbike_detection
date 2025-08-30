@@ -46,7 +46,7 @@ logging.basicConfig(filename=log_file, level=logging.INFO, format='%(asctime)s -
 st.title("Motorbike Detection")
 
 # Corrected model path for Streamlit deployment
-model_path = "../models/best_motorbike.pt"
+model_path = "models/best_motorbike.pt"
 
 if use_local_model:
     if os.path.exists(model_path):
@@ -66,7 +66,7 @@ def log_detection(image_source, num_detections):
     logging.info(log_message)
     print(log_message)
 
-# Function to save annotated output
+# Function to save annotated output and provide download link
 def save_annotated_output(annotated_img, source_name, frame_num=None, video_writer=None, save_as_frames=False, fps=None):
     output_dir = "output"
     os.makedirs(output_dir, exist_ok=True)
@@ -88,7 +88,17 @@ def save_annotated_output(annotated_img, source_name, frame_num=None, video_writ
             filename = f"{base_name}_annotated.jpg"
         output_path = os.path.join(output_dir, filename)
         cv2.imwrite(output_path, annotated_img)
+        
+        # Add a download button for the annotated image
         st.success(f"Annotated output saved to: {output_path}")
+        with open(output_path, "rb") as f:
+            st.download_button(
+                label="Download Annotated Image",
+                data=f,
+                file_name=filename,
+                mime="image/jpeg"
+            )
+
         log_detection(f"Annotated output {filename}", 0)
 
 # Input options (Webcam disabled for cloud)
@@ -185,6 +195,14 @@ elif input_type == "Video":
             if video_writer is not None:
                 video_writer.release()
                 st.success(f"Annotated video saved to: {output_video_path}")
+                # Add a download button for the annotated video
+                with open(output_video_path, "rb") as f:
+                    st.download_button(
+                        label="Download Annotated Video",
+                        data=f,
+                        file_name=f"{uploaded_video.name.split('.')[0]}_annotated.mp4",
+                        mime="video/mp4"
+                    )
             elif save_option == "Frames":
                 st.success("Annotated frames saved to output directory.")
 
