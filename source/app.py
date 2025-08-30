@@ -8,11 +8,12 @@ import datetime
 import requests
 
 # Toggle between local and Google Drive model (set to True for local, False for Drive)
-use_local_model = False  # Change to False for Google Drive download
-gdrive_model_link = "https://drive.google.com/uc?export=download&id=1SG-WkjWjMllMSnr4iX6UDjck4zVZHpOs" # Change to your preferred model link if needed
+use_local_model = False  # Set to False for cloud deployment
 
 # Download model from Google Drive
 def download_model(url, save_path):
+    # Ensure the directory exists
+    os.makedirs(os.path.dirname(save_path) or '.', exist_ok=True)
     if not os.path.exists(save_path):
         print(f"Downloading model from {url}...")
         response = requests.get(url)
@@ -43,7 +44,7 @@ if use_local_model:
         st.error(f"Local model not found at {model_path}. Please place best_motorbike.pt in the models/ folder or switch to Google Drive mode.")
 else:
     # Download from Google Drive if not using local model
-    model_url = gdrive_model_link # Extracted FILE_ID
+    model_url = "https://drive.google.com/uc?export=download&id=1SG-WkjWjMllMSnr4iX6UDjck4zVZHpOs"  # Your provided FILE_ID
     download_model(model_url, model_path)
     model = YOLO(model_path)
 
@@ -81,8 +82,8 @@ def save_annotated_output(annotated_img, source_name, frame_num=None, video_writ
         st.success(f"Annotated output saved to: {output_path}")
         log_detection(f"Annotated output {filename}", 0)
 
-# Input options
-input_type = st.radio("Select input type:", ("Image", "Webcam", "Video"))
+# Input options (Webcam disabled for cloud)
+input_type = st.radio("Select input type:", ("Image", "Video"))  # Removed "Webcam" for cloud
 
 if input_type == "Image":
     uploaded_file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
@@ -121,51 +122,6 @@ if input_type == "Image":
                 st.error(f"Detection error: {e}")
         else:
             st.write("Invalid image format. Use .jpg, .jpeg, or .png.")
-
-elif input_type == "Webcam":
-    st.write("Starting webcam... Press 'q' to stop.")
-    cap = cv2.VideoCapture(0)  # 0 is usually the default camera
-    if not cap.isOpened():
-        st.error("Error: Could not open webcam.")
-    else:
-        frame_placeholder = st.empty()
-        frame_count = 0
-        # Initialize video writer for webcam
-        fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-        fps = cap.get(cv2.CAP_PROP_FPS) if cap.get(cv2.CAP_PROP_FPS) > 0 else 30.0
-        frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-        frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-        video_writer = cv2.VideoWriter(f"output/webcam_capture_{run_timestamp}.mp4", fourcc, fps, (frame_width, frame_height))
-        
-        while cap.isOpened():
-            ret, frame = cap.read()
-            if not ret:
-                st.error("Error: Failed to capture frame.")
-                break
-            results = model(frame)[0]
-            annotated_frame = frame.copy()
-            detections = []
-            for det in results.boxes:
-                if det.cls == 0:  # motorbike class
-                    x, y, w, h = det.xywh[0].numpy()
-                    cv2.rectangle(annotated_frame, (int(x - w/2), int(y - h/2)), (int(x + w/2), int(y + h/2)), (0, 255, 0), 2)
-                    detections.append("Motorbike Detected")
-
-            if detections:
-                frame_placeholder.image(annotated_frame, caption="Webcam - Motorbike Detections", width='stretch', channels="BGR")
-                save_annotated_output(annotated_frame, "webcam_capture", frame_count, video_writer)
-                log_detection(f"Webcam Frame {frame_count}", len(detections))
-            else:
-                frame_placeholder.image(annotated_frame, caption="Webcam - No Motorbikes Detected", width='stretch', channels="BGR")
-                save_annotated_output(annotated_frame, "webcam_capture", frame_count, video_writer)
-                log_detection(f"Webcam Frame {frame_count}", 0)
-
-            frame_count += 1
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
-        cap.release()
-        video_writer.release()
-        cv2.destroyAllWindows()
 
 elif input_type == "Video":
     uploaded_video = st.file_uploader("Upload a video", type=["mp4", "avi", "mov"])
