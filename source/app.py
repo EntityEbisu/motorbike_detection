@@ -5,21 +5,46 @@ import os
 import numpy as np
 import logging
 import datetime
+import requests
 
-# Check OpenCV version
-print(f"OpenCV Version: {cv2.__version__}")
+# Toggle between local and Google Drive model (set to True for local, False for Drive)
+use_local_model = False  # Change to False for Google Drive download
+
+# Download model from Google Drive
+def download_model(url, save_path):
+    if not os.path.exists(save_path):
+        print(f"Downloading model from {url}...")
+        response = requests.get(url)
+        with open(save_path, 'wb') as f:
+            f.write(response.content)
+        print(f"Model saved to {save_path}")
+    else:
+        print(f"Model already exists at {save_path}")
 
 # Generate a unique log file name for each run
 run_timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-log_file = f"D:/Personal/ComputerVision/HelmetDetection/logs/detection_log_{run_timestamp}.txt"
+log_file = f"logs/detection_log_{run_timestamp}.txt"  # Relative path for cloud
 os.makedirs(os.path.dirname(log_file), exist_ok=True)
 logging.basicConfig(filename=log_file, level=logging.INFO, 
                     format='%(asctime)s - %(message)s')
 
 st.title("Motorbike Detection")
 
-# Load the trained model
-model = YOLO("D:/Personal/ComputerVision/HelmetDetection/models/best_motorbike.pt")
+# Model path
+model_path = "models/best_motorbike.pt"
+
+if use_local_model:
+    # Use local model if it exists
+    if os.path.exists(model_path):
+        print(f"Loading local model from {model_path}")
+        model = YOLO(model_path)
+    else:
+        st.error(f"Local model not found at {model_path}. Please place best_motorbike.pt in the models/ folder or switch to Google Drive mode.")
+else:
+    # Download from Google Drive if not using local model
+    model_url = "https://drive.google.com/uc?export=download&id=1SG-WkjWjMllMSnr4iX6UDjck4zVZHpOs"  # Extracted FILE_ID
+    download_model(model_url, model_path)
+    model = YOLO(model_path)
 
 # Function to log detection results
 def log_detection(image_source, num_detections):
@@ -29,7 +54,7 @@ def log_detection(image_source, num_detections):
 
 # Function to save annotated output
 def save_annotated_output(annotated_img, source_name, frame_num=None, video_writer=None, save_as_frames=False, fps=None):
-    output_dir = "D:/Personal/ComputerVision/HelmetDetection/output"
+    output_dir = "output"
     os.makedirs(output_dir, exist_ok=True)
     base_name = os.path.splitext(source_name)[0]
     
@@ -61,8 +86,8 @@ input_type = st.radio("Select input type:", ("Image", "Webcam", "Video"))
 if input_type == "Image":
     uploaded_file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
     if uploaded_file is not None:
-        file_path = os.path.join("D:/Personal/ComputerVision/HelmetDetection/data", uploaded_file.name)
-        os.makedirs("D:/Personal/ComputerVision/HelmetDetection/data", exist_ok=True)
+        file_path = os.path.join("data", uploaded_file.name)
+        os.makedirs("data", exist_ok=True)
         with open(file_path, "wb") as f:
             f.write(uploaded_file.getbuffer())
 
@@ -105,11 +130,11 @@ elif input_type == "Webcam":
         frame_placeholder = st.empty()
         frame_count = 0
         # Initialize video writer for webcam
-        fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # Corrected syntax
+        fourcc = cv2.VideoWriter_fourcc(*'mp4v')
         fps = cap.get(cv2.CAP_PROP_FPS) if cap.get(cv2.CAP_PROP_FPS) > 0 else 30.0
         frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-        video_writer = cv2.VideoWriter(f"D:/Personal/ComputerVision/HelmetDetection/output/webcam_capture_{run_timestamp}.mp4", fourcc, fps, (frame_width, frame_height))
+        video_writer = cv2.VideoWriter(f"output/webcam_capture_{run_timestamp}.mp4", fourcc, fps, (frame_width, frame_height))
         
         while cap.isOpened():
             ret, frame = cap.read()
@@ -144,8 +169,8 @@ elif input_type == "Webcam":
 elif input_type == "Video":
     uploaded_video = st.file_uploader("Upload a video", type=["mp4", "avi", "mov"])
     if uploaded_video is not None:
-        video_path = os.path.join("D:/Personal/ComputerVision/HelmetDetection/data", uploaded_video.name)
-        os.makedirs("D:/Personal/ComputerVision/HelmetDetection/data", exist_ok=True)
+        video_path = os.path.join("data", uploaded_video.name)
+        os.makedirs("data", exist_ok=True)
         with open(video_path, "wb") as f:
             f.write(uploaded_video.getbuffer())
 
@@ -160,11 +185,11 @@ elif input_type == "Video":
             fps = st.number_input("Frames per second (for frames option)", min_value=1, max_value=30, value=5, key="fps_input") if save_option == "Frames" else None
             
             # Initialize video writer if saving as video
-            fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # Corrected syntax
+            fourcc = cv2.VideoWriter_fourcc(*'mp4v')
             fps_video = cap.get(cv2.CAP_PROP_FPS) if cap.get(cv2.CAP_PROP_FPS) > 0 else 30.0
             frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
             frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-            output_video_path = f"D:/Personal/ComputerVision/HelmetDetection/output/{uploaded_video.name.split('.')[0]}_annotated_{run_timestamp}.mp4"
+            output_video_path = f"output/{uploaded_video.name.split('.')[0]}_annotated_{run_timestamp}.mp4"
             video_writer = cv2.VideoWriter(output_video_path, fourcc, fps_video, (frame_width, frame_height)) if save_option == "Video" else None
             
             while cap.isOpened():
