@@ -1,71 +1,60 @@
-# Motorbike Detection App
+# Motorbike Detection with YOLOv8 & Streamlit
 
-This is a Streamlit-based application for detecting motorbikes in images, webcam feeds, and videos using a YOLOv8 model. This motorbikes-only detection model and app represent the first step towards a more robust application, with future development planned to include helmet violation detection and license plate capture.
+## Project Overview
+This project is a real-time motorbike detection application built with Python. It leverages a custom-trained YOLOv8 model to accurately identify motorbikes in images and videos, providing a practical demonstration of my skills in computer vision, machine learning model deployment, and web application development. The application is designed as the foundation for a more advanced system, with future plans to detect helmet violations and capture license plates for enhanced road safety monitoring.
 
-## Features
-- Detect motorbikes in uploaded images, webcam, or videos.
-- Save annotated outputs as images (for images/webcam) or videos/frames (for videos).
-- Log detection results for each session.
+## Key Features
+- **Real-time Detection**: Utilizes a lightweight YOLOv8 model for efficient motorbike detection in various media formats.
+- **Flexible Input**: Processes images and videos, with the ability to handle user uploads seamlessly.
+- **Intuitive UI**: Provides a clean and easy-to-use web interface built with Streamlit, enabling anyone to test the model without any setup.
+- **Annotated Output**: Generates and provides downloadable annotated images and videos, clearly showing the detection bounding boxes.
+- **Cloud Deployment**: Deployed and fully functional on the Streamlit Community Cloud, demonstrating proficiency in cloud-based application deployment.
+
+## Technical Skills Demonstrated
+- **Computer Vision**: Applied core concepts of object detection and used OpenCV for image/video manipulation and annotation.
+- **Machine Learning**: Implemented and fine-tuned a state-of-the-art YOLOv8 model for a specific use case.
+- **Cloud Deployment**: Successfully configured a Python application for deployment on a cloud platform (Streamlit), including dependency management and handling file paths and resource limitations.
+- **API Integration**: Leveraged the ultralytics library to integrate the YOLO model into a front-end application.
+- **Full-Stack Development (Frontend)**: Developed a functional and responsive web interface for user interaction using Streamlit.
 
 ## Installation
-1. Clone the repository:
+1. **Clone the Repository**:
    ```bash
    git clone https://github.com/your-username/MotorbikeDetectionApp.git
    cd MotorbikeDetectionApp
    ```
-2. Install dependencies:
+2. **Install Dependencies**:
    ```bash
    pip install -r requirements.txt
    ```
 
 ## Usage
-1. Run the app:
+1. **Run the App**:
    ```bash
-   streamlit run app.py
+   streamlit run source/app.py
    ```
-2. Select an input type (Image, Webcam, Video) and upload/process accordingly.
-3. Outputs are saved to `output/`; logs are in `logs/`.
+2. **Interact with the App**: Upload an image or video, and the application will display the annotated output. You can then download the result directly from the web interface.
 
-## Tech Stack
-- **Framework**: Streamlit (for the web interface).
-- **Machine Learning**: Ultralytics YOLOv8 (for motorbike detection).
-- **Computer Vision**: OpenCV (for image/video processing and annotation).
-- **Data Handling**: NumPy (for numerical operations).
-- **Logging**: Python's built-in `logging` module (for session logs).
+## Future Development & Lessons Learned
+As a student project, this application has provided valuable insights and highlighted areas for future improvement.
 
-## Model
-- Trained model: `best_motorbike.pt` (download from [https://drive.google.com/file/d/1SG-WkjWjMllMSnr4iX6UDjck4zVZHpOs/view?usp=sharing]).
-- Training notebook: [motorbike_detection_training.ipynb](motorbike_detection_training.ipynb) (contains training details).
+- **Training Data Limitations**: The current model was trained on a specific dataset primarily containing front and rear views of motorbikes. As a result, its performance is limited on objects facing sideways or those that are small or far away.
+- **Performance Optimization**: The inference speed can vary based on the input size and processing hardware. A key takeaway is the importance of optimizing model performance for real-world applications.
 
-## Training Data
-- Sourced from a Roboflow dataset (link to be added if public).
-- Description: Contains images of motorbikes, primarily front-facing and rear-facing, which impacts detection performance (see Weaknesses).
+### Next Steps
+- **Dataset Expansion**: Sourcing and curating a more diverse dataset to improve the model's robustness to varying angles, distances, and lighting conditions.
+- **Advanced Detection**: Integrating helmet detection and license plate recognition to evolve the app from a simple detector into a more comprehensive safety monitoring tool.
 
-## Sample Output
-- Annotated video example: [https://drive.google.com/drive/folders/13ou4Q37mBWYUZIQ8-4mXkDzWe_aYLEO0?usp=sharing].
+## Project Details
+- **Tech Stack**: Streamlit, Ultralytics YOLOv8, OpenCV, NumPy
+- **Model**: `best_motorbike.pt` (trained on a custom dataset)
+- **Dataset**: Custom motorbike dataset sourced from [Roboflow](https://app.roboflow.com/minh-t81tk/helmet-detection-hxqdb/models), primarily containing front and rear views of motorbikes.
+- **Deployment**: Streamlit Community Cloud
+- **License**: This project is licensed under the MIT License.
 
-## Logs
-- Generated locally at `logs/detection_log_YYYYMMDD_HHMMSS.txt`.
-- Format: `YYYY-MM-DD HH:MM:SS - Processed [source] - [num] motorbikes detected`.
+## Dataset
+This project uses a custom motorbike dataset sourced from [Roboflow](https://app.roboflow.com/minh-t81tk/helmet-detection-hxqdb/models). The dataset primarily includes front and rear views of motorbikes, which influences the model’s performance on certain angles and distances, as noted in the "Future Development & Lessons Learned" section.
 
-## Deployment
-- Deployed on Streamlit Community Cloud: [Deployed URL to be added once available].
-
-## Weaknesses
-- The model performs poorly with:
-   - Small objects (e.g., motorbikes far away)
-   - Objects facing sideways due to the training dataset only including front-facing and rear-facing images.
-   - This limitation highlights the need for a more diverse dataset in future iterations.
-
-## Future Development
-- Enhance the application to include helmet violation detection for improved safety monitoring.
-- Add license plate capture functionality for regulatory compliance and tracking.
-- Address current weaknesses by retraining with a dataset that includes varied angles and distances.
-
-## License
-- This project is licensed under the MIT License.
-
-## Notes
-- Inference speed and detection accuracy may vary due to hardware limitations and the current training dataset.
-   - This particular detection instance is very slow (~3-500ms/frame)
-- Contributions and feedback are welcome to improve the model and app.
+## Contact
+- **Name**: Nguyen Trong Minh
+- **Email**: tminh193.bil@gmail.com
