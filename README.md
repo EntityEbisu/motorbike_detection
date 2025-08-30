@@ -41,7 +41,7 @@ Watch a demonstration of the motorbike detection application in action: [Demo Vi
 ## Future Development & Lessons Learned
 As a student project, this application has provided valuable insights and highlighted areas for future improvement.
 
-- **Training Data Limitations**: The current model was trained on a specific dataset primarily containing front and rear views of motorbikes. As a result, its performance is limited on objects facing sideways or those that are small or far away.
+- **Training Data Limitations**: The current model was trained on a specific dataset primarily containing front and rear views of motorbikes. As a result, its performance is limited on objects facing sideways or those that are small or far away. You can check the training notebook that I have uploaded within this repository: *motorbike_yoloV8 (2).ipynb*
 - **Performance Optimization**: The inference speed can vary based on the input size and processing hardware. A key takeaway is the importance of optimizing model performance for real-world applications.
 
 ### Next Steps
